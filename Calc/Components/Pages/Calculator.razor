@@ -2,6 +2,7 @@
 @rendermode InteractiveServer
 @using static CalculadoraAPI;
 @using static Calculadora;
+@inject IJSRuntime JsRuntime
 
 <PageTitle>Calculadora - Calc</PageTitle>
 
@@ -9,20 +10,19 @@
 
 <div class="container">
   <div class="input-container">
-    <form>
 
       <div class="val-container">
 
         <!-- ValorA -->
         <div class="form-group">
           <label for="valorA">Valor A</label>
-          <input id="valorA" @bind="valorA" type="number" class="form-control" placeholder="Valor numérico">
+          <input id="valorA" @bind-value="valorA" type="number" class="form-control" placeholder="Valor numérico">
         </div>
 
         <!-- ValorB -->
         <div class="form-group">
           <label for="valorB">Valor B</label>
-          <input id="valorB" @bind="valorB" type="number" class="form-control" placeholder="Valor numérico">
+          <input id="valorB" @bind-value="valorB" type="number" class="form-control" placeholder="Valor numérico">
         </div>
 
       </div>
@@ -35,7 +35,6 @@
         <button type="submit" class="btn btn-primary" @onclick="@(e => Calculate_Async(Operation.DIV))">/</button>
       </div>
 
-    </form>
   </div>
 
   <div class="list-container">
@@ -85,8 +84,9 @@
   }
 
   // Campos de valores
-  private string valorA = string.Empty;
-  private string valorB = string.Empty;
+  private string valorA { get; set; }
+  private string valorB { get; set; }
+  private int reset { get; set; }
   private Calculadora[]? registers = [];
 
   // OnInit
@@ -113,8 +113,14 @@
   // Calcula e registra valores
   private async void Calculate_Async(Operation op) {
     Console.WriteLine("API: Calcular " + op);
-    if (!isValid(valorA) || !isValid(valorB)) {
-      Console.WriteLine($"Erro! Campo inválido!");
+    if (!isNotEmpty(valorA) || !isNotEmpty(valorB)) {
+      showMessage_Async("Campos inválidos! Não devem estar vazios!");
+      Console.WriteLine("Erro! Campo inválido!");
+      return;
+    }
+    if (!isNumber(valorA) || !isNumber(valorB)) {
+      showMessage_Async("Campos inválidos! Devem conter apenas números!");
+      Console.WriteLine("Erro! Campo inválido!");
       return;
     }
     double valA = Double.Parse(valorA);
@@ -134,14 +140,35 @@
         responseBody = await CalculadoraAPI.Div_Async(valA, valB);
         break;
     }
+    resetDOM();
+    string newId = responseBody;
+    showMessage_Async($"Dados armazenados com sucesso, ID de Armazenamento {newId}");
+    await ListRegisters_Async();
     Console.WriteLine(responseBody);
   }
 
   // Validação de valores
-  private bool isValid(string valor) {
-    if (valor == null) return false;
+  private bool isNotEmpty(string valor) {
+    if (valor == null || String.IsNullOrEmpty(valor)) return false;
+    return true;
+  }
+  private bool isNumber(string valor) {
     if (!Double.TryParse(valor, out _)) return false;
     return true;
+  }
+
+  // Reset
+  private void resetDOM() {
+    valorA = "";
+    valorB = "";
+    InvokeAsync(() => {
+      StateHasChanged();
+    });
+  }
+
+  // Popup
+  private async void showMessage_Async(string message) {
+    await JsRuntime.InvokeVoidAsync("alert", message);
   }
 
 }
