@@ -1,3 +1,50 @@
-﻿.operation-container {
-  background-color: red;
+﻿
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.input-container {
+  border: 1px solid black;
+  border-radius: 15px;
+  background-color: darkgray;
+  max-width: 800px;
+}
+
+.input-container .val-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  margin-top: 15px;
+  gap: 5px;
+  padding-inline: 15px;
+}
+
+.input-container .operation-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  margin-block: 15px;
+  gap: 5px;
+}
+
+.input-container .operation-container button {
+  width: 30px;
+  height: 30px;
+  text-align: center;
+  font-weight: 200;
+}
+
+.list-container {
+  margin-top: 15px;
+  padding: 15px 15px 0px 15px;
+  border: 1px solid black;
+  border-radius: 15px;
+  background-color: darkgray;
+  min-width: 650px;
+}
+
+.list-container table th {
+  background-color: lightgray;
 }

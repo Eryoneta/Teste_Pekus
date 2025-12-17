@@ -9,7 +9,7 @@ builder.Services.AddRazorComponents().AddInteractiveServerComponents();
 // builder.Services.AddHttpClient("API", client => {
 //     client.BaseAddress = new Uri("http://pekus.ddns.net/calcapi/api/");
 // });
-builder.Services.AddScoped<CalculadoraAPI>();
+builder.Services.AddSingleton<CalculadoraAPI>();
 
 var app = builder.Build();
 

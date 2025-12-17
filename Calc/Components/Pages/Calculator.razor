@@ -1,77 +1,80 @@
 ﻿@page "/"
 @rendermode InteractiveServer
-@using System.Text.Json;
-@using System.Text.Json.Serialization;
-
+@using static CalculadoraAPI;
+@using static Calculadora;
 
 <PageTitle>Calculadora - Calc</PageTitle>
 
 <h1>Calculadora</h1>
 
-<form>
+<div class="container">
+  <div class="input-container">
+    <form>
 
-  <!-- ValorA -->
-  <div class="form-group">
-    <label for="valorA">Valor A</label>
-    <input id="valorA" @bind="valorA" type="number" class="form-control" placeholder="Valor numérico">
+      <div class="val-container">
+
+        <!-- ValorA -->
+        <div class="form-group">
+          <label for="valorA">Valor A</label>
+          <input id="valorA" @bind="valorA" type="number" class="form-control" placeholder="Valor numérico">
+        </div>
+
+        <!-- ValorB -->
+        <div class="form-group">
+          <label for="valorB">Valor B</label>
+          <input id="valorB" @bind="valorB" type="number" class="form-control" placeholder="Valor numérico">
+        </div>
+
+      </div>
+
+      <!-- Operadores -->
+      <div class="operation-container">
+        <button type="submit" class="btn btn-primary" @onclick="@(e => Calculate_Async(Operation.ADD))">+</button>
+        <button type="submit" class="btn btn-primary" @onclick="@(e => Calculate_Async(Operation.SUB))">-</button>
+        <button type="submit" class="btn btn-primary" @onclick="@(e => Calculate_Async(Operation.MUL))">*</button>
+        <button type="submit" class="btn btn-primary" @onclick="@(e => Calculate_Async(Operation.DIV))">/</button>
+      </div>
+
+    </form>
   </div>
 
-  <!-- ValorB -->
-  <div class="form-group">
-    <label for="valorB">Valor B</label>
-    <input id="valorB" @bind="valorB" type="number" class="form-control" placeholder="Valor numérico">
+  <div class="list-container">
+    @if (registers == null) {
+      <p><em>Loading...</em></p>
+    } else {
+      <table class="table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Valor A</th>
+            <th>Valor B</th>
+            <th>Operação</th>
+            <th>Resultado</th>
+            <th>Data e Hora</th>
+            <th>Ação</th>
+          </tr>
+        </thead>
+        <tbody>
+          @foreach (var register in registers) {
+            <tr>
+              <td>@register.Id</td>
+              <td>@register.ValorA</td>
+              <td>@register.ValorB</td>
+              <td>@register.Operacao</td>
+              <td>@register.Resultado</td>
+              <td>@DateTime.Parse(register.DataCalculo).ToString("dd/MM/yyyy hh:mm:ss")</td>
+              <td>
+                <button type="submit" class="btn btn-primary" @onclick="@(e => DelRegister_Async(register.Id))">Deletar</button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    }
   </div>
-
-  <!-- Operadores -->
-  <div class="operation-container">
-    <button type="submit" class="btn btn-primary" @onclick="@(e => Calculate(Operation.ADD))">+</button>
-    <button type="submit" class="btn btn-primary" @onclick="@(e => Calculate(Operation.SUB))">-</button>
-    <button type="submit" class="btn btn-primary" @onclick="@(e => Calculate(Operation.MUL))">*</button>
-    <button type="submit" class="btn btn-primary" @onclick="@(e => Calculate(Operation.DIV))">/</button>
-  </div>
-
-</form>
-
-@if (registers == null) {
-  <p><em>Loading...</em></p>
-} else {
-  <table class="table">
-    <thead>
-      <tr>
-        <th>ID</th>
-        <th>Valor A</th>
-        <th>Valor B</th>
-        <th>Operação</th>
-        <th>Resultado</th>
-        <th>Data e Hora</th>
-      </tr>
-    </thead>
-    <tbody>
-      @foreach (var register in registers) {
-        <tr>
-          <td>@register.Id</td>
-          <td>@register.ValorA</td>
-          <td>@register.ValorB</td>
-          <td>@register.Operacao</td>
-          <td>@register.Resultado</td>
-          <td>@DateTime.Parse(register.DataCalculo).ToString("dd/MM/yyyy hh:mm:ss")</td>
-        </tr>
-      }
-    </tbody>
-  </table>
-}
+</div>
 
 @code {
-
-  // API
-  // Indisponível? Erro de certificado?
-  private static string API = "http://pekus.ddns.net/calcapi/api/Calculadora";
-  private readonly string API_KEY = "GUTV5945";
-
-  // TEMP
-  private readonly string TEMP_API_GET = "https://apifastmock.com/mock/da2revIqlDbyEHTUPoq1ZVKCZqMnYOzpHb3NIKfjxRuxpV3MeCUuNKTrJ9vhiIqaChmjuAfGlwXVUez4beKxk4OCYST9RFpELmdB084ZRoFKASjPhNtaikHLgA5UihRf7I7pKGIso8dgYMP8TBCYgYzWtODbTRWrveBTQhZjMTndv6tfR00LqBbQeABbP2Ntrg_sVqu1XMHaRIW1Sv3n7MLaKwA";
-  private readonly string TEMP_API_POST = "https://apifastmock.com/mock/9KYwKM6cFbyyJY6PiGIBBvT-jh7IFg0Qgo_9WD-6mF-_CGginl6CWyFDTJl7RolmOSQsu2uYNlfKwAJg0uUUaWbAztnkFGUSiBSl91ObMfmA";
-  private readonly string TEMP_API_DELETE = "https://apifastmock.com/mock/wYd6fkiUZiqY7M1rzbiJCIYDu3W5WyUTcIUnZDwpaUATLS6BsiTa1zLFX5wi6C3vty6ZFqrpNMOancVZjCIZeY8JP-rJ69HIi51GZb6vt9-3ULZ5rg";
 
   //Operações matemáticas
   private enum Operation {
@@ -81,154 +84,54 @@
     DIV
   }
 
-  // Métodos de acesso
-  private enum Method {
-    GET,
-    POST,
-    DELETE
-  }
-
   // Campos de valores
   private string valorA = string.Empty;
   private string valorB = string.Empty;
-  private Calculadora[]? registers;
+  private Calculadora[]? registers = [];
 
+  // OnInit
   protected override async Task OnInitializedAsync() {
-    await Task.Delay(500); // Delay
-    Console.WriteLine("API: List");
-    string registersJSON = await List_Async();
-    registers = JsonSerializer.Deserialize<Calculadora[]>(registersJSON);
-  }
-
-  public class Calculadora {
-
-    // Vars
-    [JsonPropertyName("id")] public int Id { get; set; }
-    [JsonPropertyName("valorA")] public double ValorA { get; set; }
-    [JsonPropertyName("valorB")] public double ValorB { get; set; }
-    [JsonPropertyName("operacao")] public string Operacao { get; set; }
-    [JsonPropertyName("resultado")] public double Resultado { get; set; }
-    [JsonPropertyName("dataCalculo")] public string DataCalculo { get; set; }
-
-    // Main
-    public Calculadora(int Id, double ValorA, double ValorB, string Operacao, double Resultado, string DataCalculo) {
-      this.Id = Id;
-      this.ValorA = ValorA;
-      this.ValorB = ValorB;
-      this.Operacao = Operacao;
-      this.Resultado = Resultado;
-      this.DataCalculo = DataCalculo;
-    }
-
-    // Objeto -> JSON body
-    public static FormUrlEncodedContent CalculadoraToBody(Calculadora calc) {
-      return new FormUrlEncodedContent(new Dictionary<string, string> {
-        { "id", calc.Id.ToString() },
-        { "valorA", calc.ValorA.ToString() },
-        { "valorB", calc.ValorB.ToString() },
-        { "operacao", calc.Operacao },
-        { "resultado", calc.Resultado.ToString() },
-        { "dataCalculo", calc.DataCalculo }
-      });
-    }
-  }
-
-  // Acesso à API
-  private async Task<string> CallAPI_Async(Method method, string endpoint, FormUrlEncodedContent body = null) {
-    Console.WriteLine("API: Endpoint " + endpoint);
-    HttpClient client = new HttpClient();
-    HttpResponseMessage response = null;
-    switch (method) {
-      case Method.GET:
-        response = await client.GetAsync(endpoint);
-        break;
-      case Method.POST:
-        response = await client.PostAsync(endpoint, body);
-        break;
-      case Method.DELETE:
-        response = await client.DeleteAsync(endpoint);
-        break;
-    }
-    if (response != null && response.IsSuccessStatusCode) {
-      return await response.Content.ReadAsStringAsync();
-    } else {
-      Console.WriteLine($"Erro! Status code: {response.StatusCode}");
-      return null;
-    }
-  }
-  private async Task<string> Add_Async() {
-    double valA = Double.Parse(valorA);
-    double valB = Double.Parse(valorB);
-    double result = valA + valB;
-    string currentDate = DateTime.Now.ToString("o");
-    Calculadora calc = new Calculadora(0, valA, valB, "+", result, currentDate);
-    return await CallAPI_Async(Method.POST, $"{TEMP_API_POST}?apikey={API_KEY}", Calculadora.CalculadoraToBody(calc));
-  }
-  private async Task<string> Sub_Async() {
-    double valA = Double.Parse(valorA);
-    double valB = Double.Parse(valorB);
-    double result = valA - valB;
-    string currentDate = DateTime.Now.ToString("o");
-    Calculadora calc = new Calculadora(0, valA, valB, "-", result, currentDate);
-    return await CallAPI_Async(Method.POST, $"{TEMP_API_POST}?apikey={API_KEY}", Calculadora.CalculadoraToBody(calc));
-  }
-  private async Task<string> Mul_Async() {
-    double valA = Double.Parse(valorA);
-    double valB = Double.Parse(valorB);
-    double result = valA * valB;
-    string currentDate = DateTime.Now.ToString("o");
-    Calculadora calc = new Calculadora(0, valA, valB, "*", result, currentDate);
-    return await CallAPI_Async(Method.POST, $"{TEMP_API_POST}?apikey={API_KEY}", Calculadora.CalculadoraToBody(calc));
-  }
-  private async Task<string> Div_Async() {
-    double valA = Double.Parse(valorA);
-    double valB = Double.Parse(valorB);
-    double result = valA / valB;
-    string currentDate = DateTime.Now.ToString("o");
-    Calculadora calc = new Calculadora(0, valA, valB, "/", result, currentDate);
-    return await CallAPI_Async(Method.POST, $"{TEMP_API_POST}?apikey={API_KEY}", Calculadora.CalculadoraToBody(calc));
-  }
-  private async Task<string> List_Async() {
-    return await CallAPI_Async(Method.GET, $"{TEMP_API_GET}?apikey={API_KEY}");
-  }
-  private async Task<string> Del_Async(int id) {
-    return await CallAPI_Async(Method.DELETE, $"{TEMP_API_DELETE}?apikey={API_KEY}&id={id}");
+    await ListRegisters_Async();
   }
 
   // Lista registros
-  private async void ListRegisters() {
+  private async Task<bool> ListRegisters_Async() {
     Console.WriteLine("API: Listar registros");
-    string responseBody = await List_Async();
+    string responseBody = await CalculadoraAPI.List_Async();
+    registers = Calculadora.ToCalcList(responseBody);
     Console.WriteLine(responseBody);
+    return true;
   }
 
   // Deleta registro
-  private async void DelRegister(int id) {
+  private async void DelRegister_Async(int id) {
     Console.WriteLine("API: Remover registro " + id);
-    string responseBody = await Del_Async(id);
+    string responseBody = await CalculadoraAPI.Del_Async(id);
     Console.WriteLine(responseBody);
   }
 
   // Calcula e registra valores
-  private async void Calculate(Operation op) {
+  private async void Calculate_Async(Operation op) {
     Console.WriteLine("API: Calcular " + op);
     if (!isValid(valorA) || !isValid(valorB)) {
       Console.WriteLine($"Erro! Campo inválido!");
       return;
     }
+    double valA = Double.Parse(valorA);
+    double valB = Double.Parse(valorB);
     string responseBody = "";
     switch (op) {
       case Operation.ADD:
-        responseBody = await Add_Async();
+        responseBody = await CalculadoraAPI.Add_Async(valA, valB);
         break;
       case Operation.SUB:
-        responseBody = await Sub_Async();
+        responseBody = await CalculadoraAPI.Sub_Async(valA, valB);
         break;
       case Operation.MUL:
-        responseBody = await Mul_Async();
+        responseBody = await CalculadoraAPI.Mul_Async(valA, valB);
         break;
       case Operation.DIV:
-        responseBody = await Div_Async();
+        responseBody = await CalculadoraAPI.Div_Async(valA, valB);
         break;
     }
     Console.WriteLine(responseBody);
