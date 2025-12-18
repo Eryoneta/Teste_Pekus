@@ -107,6 +107,8 @@
   private async void DelRegister_Async(int id) {
     Console.WriteLine("API: Remover registro " + id);
     string responseBody = await CalculadoraAPI.Del_Async(id);
+    await ListRegisters_Async();
+    resetDOM();
     showMessage_Async($"Registro {id} deletado");
     Console.WriteLine(responseBody);
   }
@@ -141,10 +143,10 @@
         responseBody = await CalculadoraAPI.Div_Async(valA, valB);
         break;
     }
+    await ListRegisters_Async();
     resetDOM();
     string newId = responseBody;
     showMessage_Async($"Dados armazenados com sucesso, ID de Armazenamento {newId}");
-    await ListRegisters_Async();
     Console.WriteLine(responseBody);
   }
 
