@@ -1,12 +1,10 @@
 public class CalculadoraAPI {
     // API
-    // Indisponível? Erro de certificado?
-    private static string API = "http://pekus.ddns.net/calcapi/api/Calculadora";
+    private static string API = "https://intranet.pekus.com.br/calcapi/api/Calculadora";
     private static string API_KEY = "GUTV5945";
 
     // MOCK API
-    // Pode ser desabilitado (false) para usar a API real
-    private static bool USE_MOCK = true;
+    private static bool USE_MOCK = false;
     private static string TEMP_API_GET = "https://apifastmock.com/mock/da2revIqlDbyEHTUPoq1ZVKCZqMnYOzpHb3NIKfjxRuxpV3MeCUuNKTrJ9vhiIqaChmjuAfGlwXVUez4beKxk4OCYST9RFpELmdB084ZRoFKASjPhNtaikHLgA5UihRf7I7pKGIso8dgYMP8TBCYgYzWtODbTRWrveBTQhZjMTndv6tfR00LqBbQeABbP2Ntrg_sVqu1XMHaRIW1Sv3n7MLaKwA";
     private static string TEMP_API_POST = "https://apifastmock.com/mock/9KYwKM6cFbyyJY6PiGIBBvT-jh7IFg0Qgo_9WD-6mF-_CGginl6CWyFDTJl7RolmOSQsu2uYNlfKwAJg0uUUaWbAztnkFGUSiBSl91ObMfmA";
     private static string TEMP_API_DELETE = "https://apifastmock.com/mock/wYd6fkiUZiqY7M1rzbiJCIYDu3W5WyUTcIUnZDwpaUATLS6BsiTa1zLFX5wi6C3vty6ZFqrpNMOancVZjCIZeY8JP-rJ69HIi51GZb6vt9-3ULZ5rg";
