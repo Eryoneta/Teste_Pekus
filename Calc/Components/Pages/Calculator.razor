@@ -61,7 +61,7 @@
               <td>@String.Format("{0:0.00}", register.ValorB)</td>
               <td>@register.Operacao</td>
               <td>@String.Format("{0:0.00}", register.Resultado)</td>
-              <td>@DateTime.Parse(register.DataCalculo).ToString("dd/MM/yyyy hh:mm:ss")</td>
+              <td>@DateTime.Parse(register.DataCalculo).ToString("dd/MM/yyyy HH:mm:ss")</td>
               <td>
                 <button type="submit" class="btn btn-primary" @onclick="@(e => DelRegister_Async(register.Id))">Deletar</button>
               </td>
