@@ -116,13 +116,14 @@
   // Calcula e registra valores
   private async void Calculate_Async(Operation op) {
     Console.WriteLine("API: Calcular " + op);
-    if (!isNotEmpty(valorA) || !isNotEmpty(valorB)) {
-      showMessage_Async("Campos inválidos! Não devem estar vazios!");
-      Console.WriteLine("Erro! Campo inválido!");
-      return;
-    }
+    // Valores de input number retornam "" se não tiverem números
+    //if (!isNotEmpty(valorA) || !isNotEmpty(valorB)) {
+      //showMessage_Async("Campos inválidos! Não devem estar vazios!");
+      //Console.WriteLine("Erro! Campo inválido!");
+      //return;
+    //}
     if (!isNumber(valorA) || !isNumber(valorB)) {
-      showMessage_Async("Campos inválidos! Devem conter apenas números!");
+      showMessage_Async("Campos inválidos! Estes devem conter números!");
       Console.WriteLine("Erro! Campo inválido!");
       return;
     }
