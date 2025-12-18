@@ -107,6 +107,7 @@
   private async void DelRegister_Async(int id) {
     Console.WriteLine("API: Remover registro " + id);
     string responseBody = await CalculadoraAPI.Del_Async(id);
+    showMessage_Async($"Registro {id} deletado");
     Console.WriteLine(responseBody);
   }
 
