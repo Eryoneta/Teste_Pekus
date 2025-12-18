@@ -17,7 +17,7 @@ public class CalculadoraAPI {
     }
 
     // Acesso à API
-    public static async Task<string> CallAPI_Async(Method method, string endpoint, FormUrlEncodedContent body = null) {
+    public static async Task<string> CallAPI_Async(Method method, string endpoint, HttpContent body = null) {
         Console.WriteLine("API: Endpoint " + endpoint);
         HttpClient client = new HttpClient();
         HttpResponseMessage response = null;

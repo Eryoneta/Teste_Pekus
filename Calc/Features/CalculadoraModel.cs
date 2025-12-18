@@ -1,5 +1,7 @@
+using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using System.Net.Http.Headers;
 
 public class Calculadora {
 
@@ -22,15 +24,12 @@ public class Calculadora {
     }
 
     // Objeto -> JSON body
-    public static FormUrlEncodedContent ToBody(Calculadora calc) {
-        return new FormUrlEncodedContent(new Dictionary<string, string> {
-            { "id", calc.Id.ToString() },
-            { "valorA", calc.ValorA.ToString() },
-            { "valorB", calc.ValorB.ToString() },
-            { "operacao", calc.Operacao },
-            { "resultado", calc.Resultado.ToString() },
-            { "dataCalculo", calc.DataCalculo }
-        });
+    public static HttpContent ToBody(Calculadora calc) {
+        var jsonContent = JsonSerializer.Serialize(calc);
+        var buffer = System.Text.Encoding.UTF8.GetBytes(jsonContent);
+        var byteContent = new ByteArrayContent(buffer);
+        byteContent.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+        return byteContent;
     }
 
     // JSON body -> Objeto
